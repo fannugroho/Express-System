@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Kansai Paint Supplier</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="flex min-h-screen bg-gradient-to-r from-blue-500 to-red-500">
+        <aside id="sidebar" class="w-64 bg-white shadow-lg p-6 space-y-4 transition-transform transform">
+            <h2 class="text-2xl font-bold text-blue-900 text-center">Menu</h2>
+            <button onclick="goToMyData()" class="block w-full text-left px-4 py-2 bg-blue-700 text-white rounded-lg shadow-md hover:bg-blue-800">Lihat Data Saya</button>
+            <button onclick="goToPurchaseRequest()" class="block w-full text-left px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">Purchase Request</button>
+            <button onclick="goToReimbursement()" class="block w-full text-left px-4 py-2 bg-yellow-600 text-white rounded-lg shadow-md hover:bg-yellow-700">Reimbursement</button>
+            <button onclick="goToCashAdvance()" class="block w-full text-left px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700">Cash Advance</button>
+            <button onclick="goToCashAdvance()" class="block w-full text-left px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-purple-700">Settlement</button>
+            <button onclick="goToPurchaseOrder()" class="block w-full text-left px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700">Purchase Order</button>
+            
+            <div>
+                <button onclick="toggleSubMenu('invoiceMenu')" class="block w-full text-left px-4 py-2 bg-pink-600 text-white rounded-lg shadow-md hover:bg-pink-700">Invoice ▼</button>
+                <div id="invoiceMenu" class="hidden pl-4">
+                    <button onclick="goToAPInvoice()" class="block w-full text-left px-4 py-2 bg-pink-500 text-white-900 rounded-lg shadow-md hover:bg-pink-600">AP Invoice</button>
+                    <button onclick="goToARInvoice()" class="block w-full text-left px-4 py-2 bg-pink-500 text-white-900 rounded-lg shadow-md hover:bg-pink-600">AR Invoice</button>
+                </div>
+            </div>
+            
+            <div>
+                <button onclick="toggleSubMenu('bankingMenu')" class="block w-full text-left px-4 py-2 bg-teal-600 text-blue-900 rounded-lg shadow-md hover:bg-teal-700">Banking ▼</button>
+                <div id="bankingMenu" class="hidden pl-4">
+                    <button onclick="goToOutgoingPayment()" class="block w-full text-left px-4 py-2 bg-teal-500 text-blue-900 rounded-lg shadow-md hover:bg-teal-600">Outgoing Payment</button>
+                    <button onclick="goToIncomingPayment()" class="block w-full text-left px-4 py-2 bg-teal-500 text-blue-900 rounded-lg shadow-md hover:bg-teal-600">Incoming Payment</button>
+                </div>
+            </div>
+    
+            <button onclick="logout()" class="block w-full text-left px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600">Logout</button>
+        </aside>
+        <div class="flex-1 p-6">
+            <h2 class="text-3xl font-bold text-white mb-4">Dashboard</h2>
+            
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Total Documents</h3>
+                    <p id="totalDocs" class="text-2xl font-bold text-blue-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Pending</h3>
+                    <p id="pendingDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Approved</h3>
+                    <p id="approvedDocs" class="text-2xl font-bold text-green-600">0</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Recent Documents</h3>
+                <table class="w-full border">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2">Doc Number</th>
+                            <th class="p-2">Requester</th>
+                            <th class="p-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentDocs"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--<button onclick="toggleSidebar()" class="fixed top-4 left-4 bg-gray-800 text-white p-2 rounded">☰</button>-->
+
+    <script>
+        function loadDashboard() {
+            const documents = JSON.parse(localStorage.getItem("documents")) || [];
+            document.getElementById("totalDocs").textContent = documents.length;
+            document.getElementById("pendingDocs").textContent = documents.filter(doc => doc.docStatus === "Pending").length;
+            document.getElementById("approvedDocs").textContent = documents.filter(doc => doc.docStatus === "Approved").length;
+
+            const recentDocs = documents.slice(-5).reverse();
+            const tableBody = document.getElementById("recentDocs");
+            tableBody.innerHTML = "";
+            recentDocs.forEach(doc => {
+                const row = `<tr class='border-b'>
+                    <td class='p-2'>${doc.docNumber}</td>
+                    <td class='p-2'>${doc.requester}</td>
+                    <td class='p-2'>${doc.docStatus}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("-translate-x-full");
+        }
+
+        function toggleSubMenu(menuId) {
+            document.getElementById(menuId).classList.toggle("hidden");
+        }
+
+        function goToMyData() { window.location.href = "MyData.html"; }
+        function goToPurchaseRequest() { window.location.href = "PurchaseRequest.html"; }
+        function goToReimbursement() { window.location.href = "Reimbursement.html"; }
+        function goToCashAdvance() { window.location.href = "CashAdvance.html"; }
+        function goToPurchaseOrder() { window.location.href = "PurchaseOrder.html"; }
+        function goToAPInvoice() { window.location.href = "APInvoice.html"; }
+        function goToARInvoice() { window.location.href = "ARInvoice.html"; }
+        function goToOutgoingPayment() { window.location.href = "OutgoingPayment.html"; }
+        function goToIncomingPayment() { window.location.href = "IncomingPayment.html"; }
+        function logout() { localStorage.removeItem("loggedInUser"); window.location.href = "Login.html"; }
+
+        window.onload = loadDashboard;
+    </script>
+</body>
+</html>

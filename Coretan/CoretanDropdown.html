@@ -1,0 +1,87 @@
+<h3 class="text-lg font-semibold mb-2">Type PR</h3>
+<select id="docType" class="w-full p-2 border rounded" onchange="toggleFields()">
+    <option value="" disabled selected>Pilih Type PR</option>
+    <option value="Item">Item</option>
+    <option value="Service">Service</option>
+</select>
+
+<!-- Tabel untuk input -->
+<table id="prTable" class="w-full mt-4 border-collapse border border-gray-400">
+    <thead>
+        <tr class="bg-gray-200">
+            <th id="thItemCode" class="border border-gray-400 p-2">Item Code</th>
+            <th id="thItemName" class="border border-gray-400 p-2">Item Name</th>
+            <th id="thQuantity" class="border border-gray-400 p-2">Quantity</th>
+            <th id="thPrice" class="border border-gray-400 p-2">Price</th>
+            <th id="thDescription" class="border border-gray-400 p-2">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="tdItemCode" class="border border-gray-400 p-2">
+                <select id="itemCode" class="w-full p-2 border rounded" onchange="fillItemDetails()">
+                    <option value="" disabled selected>Pilih Kode Item</option>
+                    <option value="ITM001">ITM001 - Laptop</option>
+                    <option value="ITM002">ITM002 - Printer</option>
+                    <option value="ITM003">ITM003 - Scanner</option>
+                </select>
+            </td>
+            <td id="tdItemName" class="border border-gray-400 p-2">
+                <input type="text" id="itemName" class="w-full p-2 border rounded" readonly>
+            </td>
+            <td id="tdQuantity" class="border border-gray-400 p-2">
+                <input type="number" id="itemQuantity" class="w-full p-2 border rounded">
+            </td>
+            <td id="tdPrice" class="border border-gray-400 p-2">
+                <input type="text" id="itemPrice" class="w-full p-2 border rounded" readonly>
+            </td>
+            <td id="tdDescription" class="border border-gray-400 p-2">
+                <textarea id="serviceDescription" class="w-full p-2 border rounded" placeholder="Enter service details..."></textarea>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    function toggleFields() {
+        const typePR = document.getElementById("docType").value;
+        const itemFields = ["thItemCode", "thItemName", "thQuantity", "thPrice", "tdItemCode", "tdItemName", "tdQuantity", "tdPrice"];
+        const serviceFields = ["thDescription", "tdDescription"];
+
+        if (typePR === "Item") {
+            // Tampilkan semua kolom item, sembunyikan deskripsi
+            itemFields.forEach(id => document.getElementById(id).style.display = "table-cell");
+            serviceFields.forEach(id => document.getElementById(id).style.display = "none");
+        } else if (typePR === "Service") {
+            // Sembunyikan kolom item, tampilkan deskripsi
+            itemFields.forEach(id => document.getElementById(id).style.display = "none");
+            serviceFields.forEach(id => document.getElementById(id).style.display = "table-cell");
+        }
+    }
+
+    function fillItemDetails() {
+        const itemCode = document.getElementById("itemCode").value;
+        const itemName = document.getElementById("itemName");
+        const itemPrice = document.getElementById("itemPrice");
+
+        const itemData = {
+            "ITM001": { name: "Laptop", price: "15,000,000" },
+            "ITM002": { name: "Printer", price: "3,500,000" },
+            "ITM003": { name: "Scanner", price: "2,000,000" }
+        };
+
+        if (itemData[itemCode]) {
+            itemName.value = itemData[itemCode].name;
+            itemPrice.value = itemData[itemCode].price;
+        }
+    }
+
+    // Set default agar tabel tidak menampilkan kolom sebelum memilih Type PR
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("prTable").style.display = "none";
+    });
+
+    document.getElementById("docType").addEventListener("change", function() {
+        document.getElementById("prTable").style.display = "table";
+    });
+</script>

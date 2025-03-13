@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>Sidebar Elegan</title>
+</head>
+<body>
+    <div class="flex min-h-screen bg-gradient-to-r from-blue-500 to-red-500">
+        <aside id="sidebar" class="w-64 bg-white shadow-lg p-6 space-y-4">
+            <img src="Seiho.png" alt="Dentsu Soken" class="h-20 w-auto max-w-full mx-auto" />
+            <br>
+            <button onclick="goToMenu()" class="menu-btn"><i class="fas fa-home"></i> Dashboard</button>
+            <button onclick="goToMenuPR()" class="menu-btn"><i class="fas fa-file-invoice-dollar"></i> Purchase Request</button>
+            <button onclick="goToMenuReim()" class="menu-btn"><i class="fas fa-hand-holding-usd"></i> Reimbursement</button>
+            <button onclick="goToMenuCash()" class="menu-btn"><i class="fas fa-wallet"></i> Cash Advance</button>
+            <button onclick="goToMenuSettle()" class="menu-btn"><i class="fas fa-balance-scale"></i> Settlement</button>
+        
+            <div>
+                <button onclick="toggleSubMenu('ApprovalReport')" class="menu-btn">
+                    <i class="fas fa-check-circle"></i> Approval Decision Report ▼
+                </button>
+                <div id="ApprovalReport" class="hidden pl-4">
+                    <button onclick="goToMenuPO()" class="submenu-btn"><i class="fas fa-file-contract"></i> PO Approval</button>
+                    <button onclick="goToMenuInvoice()" class="submenu-btn"><i class="fas fa-file-invoice"></i> Invoice Approval</button>
+                    <button onclick="goToMenuBanking()" class="submenu-btn"><i class="fas fa-university"></i> Banking Approval</button>
+                </div>
+            </div>
+        
+            <button onclick="logout()" class="menu-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </aside>
+    </div>
+
+    <style>
+        /* Styling tombol */
+        .menu-btn, .submenu-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s ease, transform 0.2s;
+        }
+
+        .menu-btn {
+            background: white;
+            color: #333;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .submenu-btn {
+            background: #f8f9fa;
+            color: #555;
+        }
+
+        /* Hover effect */
+        .menu-btn:hover {
+            background: #f1f1f1;
+            transform: translateX(5px);
+        }
+
+        .submenu-btn:hover {
+            background: #e2e2e2;
+        }
+    </style>
+
+</body>
+</html>

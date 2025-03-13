@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - Kansai Paint Supplier</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="flex min-h-screen bg-gradient-to-r from-blue-500 to-red-500">
+        <aside id="sidebar" class="w-64 bg-white shadow-lg p-6 space-y-4">
+            <img src="Seiho.png" alt="Dentsu Soken" class="h-18 w-auto max-w-full mx-auto" />
+            <br>
+            <button onclick="goToMenu()" class="menu-btn"><i class="fas fa-home"></i> Dashboard</button>
+            <button onclick="goToMenuPR()" class="menu-btn"><i class="fas fa-file-invoice-dollar"></i> Purchase Request</button>
+            <button onclick="goToMenuReim()" class="menu-btn"><i class="fas fa-hand-holding-usd"></i> Reimbursement</button>
+            <button onclick="goToMenuCash()" class="menu-btn"><i class="fas fa-wallet"></i> Cash Advance</button>
+            <button onclick="goToMenuSettle()" class="menu-btn"><i class="fas fa-balance-scale"></i> Settlement</button>
+        
+            <div>
+                <button onclick="toggleSubMenu('ApprovalReport')" class="menu-btn">
+                    <i class="fas fa-check-circle"></i> Approval Decision Report ▼
+                </button>
+                <div id="ApprovalReport" class="hidden pl-4">
+                    <button onclick="goToMenuPO()" class="submenu-btn"><i class="fas fa-file-contract"></i> PO Approval</button>
+                    <button onclick="goToMenuInvoice()" class="submenu-btn"><i class="fas fa-file-invoice"></i> Invoice Approval</button>
+                    <button onclick="goToMenuBanking()" class="submenu-btn"><i class="fas fa-university"></i> Banking Approval</button>
+                </div>
+            </div>
+        
+            <button onclick="logout()" class="menu-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </aside>
+
+        <div class="absolute top-4 right-4">
+            <img id="dashboardUserIcon" src="" alt="User Avatar"
+                 class="w-12 h-12 rounded-full border-2 border-gray-300 cursor-pointer"
+                 onclick="goToProfile()">
+        </div>
+        
+        <div class="flex-1 p-6">
+            <h2 id="greeting" class="text-5xl font-bold text-white mb-4"></h2>
+            <h2 class="text-3xl font-bold text-white mb-4">Welcome to Dashboard Express System</h2>
+            <br><br><br><br>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 mx-auto max-w-4xl justify-center">
+
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Total Documents</h3>
+                    <p id="totalDocs" class="text-2xl font-bold text-blue-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Draft</h3>
+                    <p id="openDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Prepared</h3>
+                    <p id="preparedDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Checked</h3>
+                    <p id="checkedDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Acknowledge</h3>
+                    <p id="acknowledgeDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Approved</h3>
+                    <p id="approvedDocs" class="text-2xl font-bold text-green-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Received by Purchasing</h3>
+                    <p id="receivedDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-lg font-semibold">Reject</h3>
+                    <p id="rejectDocs" class="text-2xl font-bold text-yellow-600">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<button onclick="toggleSidebar()" class="fixed top-4 left-4 bg-gray-800 text-white p-2 rounded">☰</button>-->
+    <script>
+    window.onload = function () {
+        loadUserGreeting();
+        loadDashboardAvatar();
+        loadDashboard();
+    };
+    
+    function loadUserGreeting() {
+        const userData = localStorage.getItem("loggedInUser");
+        if (userData) {
+            const { usercode, name } = JSON.parse(userData);
+            safeSetTextContent("greeting", `Hii ${name} (${usercode})`);
+        } else {
+            safeSetTextContent("greeting", "Hii Guest");
+        }
+    }
+    
+    function loadDashboardAvatar() {
+        const savedAvatar = localStorage.getItem("userAvatar");
+        if (savedAvatar) {
+            document.getElementById("dashboardUserIcon").src = savedAvatar;
+        }
+    }
+    
+    function loadDashboard() {
+        const documents = JSON.parse(localStorage.getItem("documents")) || [];
+        
+        safeSetTextContent("totalDocs", documents.length);
+        safeSetTextContent("openDocs", documents.filter(doc => doc.docStatus === "Open").length);
+        safeSetTextContent("checkedDocs", documents.filter(doc => doc.docStatus === "Checked").length);
+        safeSetTextContent("acknowledgeDocs", documents.filter(doc => doc.docStatus === "Acknowledge").length);
+        safeSetTextContent("approvedDocs", documents.filter(doc => doc.docStatus === "Approved").length);
+        safeSetTextContent("receivedDocs", documents.filter(doc => doc.docStatus === "Received").length);
+    }
+    
+    function safeSetTextContent(id, value) {
+        let el = document.getElementById(id);
+        if (el) {
+            el.textContent = value;
+        }
+    }
+    
+    function goToProfile() {
+        window.location.href = "Profil.html";
+    }
+    
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("-translate-x-full");
+    }
+    
+    function toggleSubMenu(menuId) {
+        document.getElementById(menuId).classList.toggle("hidden");
+    }
+    
+    // Fungsi Navigasi
+        function goToMenu() { window.location.href = "Menu.html"; }
+        function goToAddDoc() {window.location.href = "AddDoc.html"; }
+        function goToAddReim() {window.location.href = "AddReim.html"; }
+        function goToAddCash() {window.location.href = "AddCash.html"; }
+        function goToAddSettle() {window.location.href = "AddSettle.html"; }
+        function goToAddPO() {window.location.href = "AddPO.html"; }
+        function goToMenuPR() { window.location.href = "MenuPR.html"; }
+        function goToMenuReim() { window.location.href = "MenuReim.html"; }
+        function goToMenuCash() { window.location.href = "MenuCash.html"; }
+        function goToMenuSettle() { window.location.href = "MenuSettle.html"; }
+        function goToApprovalReport() { window.location.href = "ApprovalReport.html"; }
+        function goToMenuPO() { window.location.href = "MenuPO.html"; }
+        function goToMenuInvoice() { window.location.href = "MenuInvoice.html"; }
+        function goToMenuBanking() { window.location.href = "MenuBanking.html"; }
+    
+    function logout() { 
+        localStorage.removeItem("loggedInUser"); 
+        window.location.href = "Login.html"; 
+    }
+</script>
+
+<style>
+    /* Styling tombol */
+    .menu-btn, .submenu-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s ease, transform 0.2s;
+        }
+
+        .menu-btn {
+            background: white;
+            color: #333;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .submenu-btn {
+            background: #f8f9fa;
+            color: #555;
+        }
+
+        /* Hover effect */
+        .menu-btn:hover {
+            background: #f1f1f1;
+            transform: translateX(5px);
+        }
+
+        .submenu-btn:hover {
+            background: #e2e2e2;
+        }
+</style>
+
+</body>
+</html>

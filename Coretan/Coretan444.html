@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Luxury</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        .btn { cursor: pointer; padding: 5px 10px; margin: 2px; }
+        .btn-approve { background-color: green; color: white; }
+        .btn-delete { background-color: red; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Inventory Luxury</h1>
+        <nav>
+            <a href="index.html">Home</a> | <a href="dashboard.html">Dashboard</a>
+        </nav>
+        <label>Role:
+            <select id="userRole">
+                <option value="admin">Administrator</option>
+                <option value="manager">Manager</option>
+            </select>
+        </label>
+        <div id="adminPanel">
+            <h2>Tambah Barang</h2>
+            <input type="text" id="nama" placeholder="Nama Barang">
+            <input type="text" id="kode" placeholder="Kode Barang">
+            <input type="number" id="jumlah" placeholder="Jumlah">
+            <input type="number" id="harga" placeholder="Harga">
+            <button onclick="tambahBarang()">Tambah</button>
+        </div>
+        <h2>Daftar Barang</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Kode</th>
+                    <th>Jumlah</th>
+                    <th>Harga</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="barangList"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let barang = JSON.parse(localStorage.getItem("barang")) || [];
+        let role = "admin";
+
+        document.getElementById("userRole").addEventListener("change", function() {
+            role = this.value;
+            document.getElementById("adminPanel").style.display = role === "admin" ? "block" : "none";
+            renderBarang();
+        });
+
+        function tambahBarang() {
+            let nama = document.getElementById("nama").value;
+            let kode = document.getElementById("kode").value;
+            let jumlah = document.getElementById("jumlah").value;
+            let harga = document.getElementById("harga").value;
+            barang.push({ nama, kode, jumlah, harga, approved: false });
+            localStorage.setItem("barang", JSON.stringify(barang));
+            renderBarang();
+        }
+
+        function approveBarang(index) {
+            barang[index].approved = true;
+            localStorage.setItem("barang", JSON.stringify(barang));
+            renderBarang();
+        }
+
+        function hapusBarang(index) {
+            barang.splice(index, 1);
+            localStorage.setItem("barang", JSON.stringify(barang));
+            renderBarang();
+        }
+
+        function renderBarang() {
+            let tbody = document.getElementById("barangList");
+            tbody.innerHTML = "";
+            barang.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nama}</td>
+                        <td>${item.kode}</td>
+                        <td>${item.jumlah}</td>
+                        <td>${item.harga}</td>
+                        <td>${item.approved ? '✅ Approved' : '⏳ Belum disetujui'}</td>
+                        <td>
+                            ${role === "manager" ? `<button class='btn btn-approve' onclick='approveBarang(${index})'>Approve</button>` : ""}
+                            <button class='btn btn-delete' onclick='hapusBarang(${index})'>Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+
+        document.body.insertAdjacentHTML('beforeend', '<button onclick="refreshData()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: blue; color: white; border: none; cursor: pointer;">🔄 Refresh</button>');
+
+        renderBarang();
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager - Inventory Luxury</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        .btn { cursor: pointer; padding: 5px 10px; margin: 2px; }
+        .btn-approve { background-color: green; color: white; }
+        .btn-delete { background-color: red; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manager - Inventory Luxury</h1>
+        <nav>
+            <a href="index.html">Home</a> | <a href="dashboard.html">Dashboard</a> | <a href="manager.html">Manager</a>
+        </nav>
+        <h2>Daftar Barang untuk Approval</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Kode</th>
+                    <th>Jumlah</th>
+                    <th>Harga</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="barangList"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let barang = JSON.parse(localStorage.getItem("barang")) || [];
+
+        function approveBarang(index) {
+            barang[index].approved = true;
+            localStorage.setItem("barang", JSON.stringify(barang));
+            renderBarang();
+        }
+
+        function hapusBarang(index) {
+            barang.splice(index, 1);
+            localStorage.setItem("barang", JSON.stringify(barang));
+            renderBarang();
+        }
+
+        function renderBarang() {
+            let tbody = document.getElementById("barangList");
+            tbody.innerHTML = "";
+            barang.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nama}</td>
+                        <td>${item.kode}</td>
+                        <td>${item.jumlah}</td>
+                        <td>${item.harga}</td>
+                        <td>${item.approved ? '✅ Approved' : '⏳ Belum disetujui'}</td>
+                        <td>
+                            ${!item.approved ? `<button class='btn btn-approve' onclick='approveBarang(${index})'>Approve</button>` : ""}
+                            <button class='btn btn-delete' onclick='hapusBarang(${index})'>Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+
+        document.body.insertAdjacentHTML('beforeend', '<button onclick="refreshData()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: blue; color: white; border: none; cursor: pointer;">🔄 Refresh</button>');
+
+
+        renderBarang();
+    </script>
+</body>
+</html>

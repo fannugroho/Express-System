@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Inventory Luxury</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .box { border: 1px solid #ddd; padding: 20px; margin: 10px 0; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard Inventory Luxury</h1>
+        <nav>
+            <a href="index.html">Home</a> | <a href="dashboard.html">Dashboard</a>
+        </nav>
+        <div class="box">
+            <h2>Total Barang: <span id="totalBarang">0</span></h2>
+        </div>
+        <div class="box">
+            <h2>Belum Disetujui: <span id="belumApprove">0</span></h2>
+        </div>
+        <div class="box">
+            <h2>Sudah Disetujui: <span id="sudahApprove">0</span></h2>
+        </div>
+    </div>
+
+    <script>
+        function loadDashboard() {
+            let barang = JSON.parse(localStorage.getItem("barang")) || [];
+            let total = barang.length;
+            let belumApprove = barang.filter(item => !item.approved).length;
+            let sudahApprove = barang.filter(item => item.approved).length;
+
+            document.getElementById("totalBarang").innerText = total;
+            document.getElementById("belumApprove").innerText = belumApprove;
+            document.getElementById("sudahApprove").innerText = sudahApprove;
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+
+        document.body.insertAdjacentHTML('beforeend', '<button onclick="refreshData()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px; background: blue; color: white; border: none; cursor: pointer;">🔄 Refresh</button>');
+
+        loadDashboard();
+    </script>
+</body>
+</html>

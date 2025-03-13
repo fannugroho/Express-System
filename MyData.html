@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Data - Japanese Themed CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        function loadDocuments() {
+            const documents = JSON.parse(localStorage.getItem("documents")) || [];
+            const tableBody = document.getElementById("documentTable");
+            tableBody.innerHTML = "";
+            
+            documents.forEach((doc, index) => {
+                const row = `<tr class='border-b'>
+                    <td class='p-3 text-center'><input type='checkbox' class='w-4 h-4'></td>
+                    <td class='p-3'>${doc.docNumber}</td>
+                    <td class='p-3'>${doc.requester}</td>
+                    <td class='p-3'>${doc.department}</td>
+                    <td class='p-3'>${doc.postingDate}</td>
+                    <td class='p-3'>${doc.dueDate}</td>
+                    <td class='p-3'>${doc.classification}</td>
+                    <td class='p-3'>${doc.docStatus}</td>
+                    <td class='p-3'><button class='bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600' onclick='editDocument(${index})'>Edit</button></td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+        
+        function editDocument(index) {
+            localStorage.setItem("editIndex", index);
+            window.location.href = "AddDoc.html";
+        }
+        
+        function submitToSystem() {
+            alert("Documents have been submitted to the system.");
+        }
+
+        function goToMyData() {
+            window.location.href = "AddDoc.html"; // Redirect ke halaman AddDoc
+        }
+        
+        window.onload = loadDocuments;
+    </script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-red-500">
+    <div class="bg-white p-6 rounded-2xl shadow-xl w-5/6">
+        <h2 class="text-2xl font-bold text-center text-blue-900 mb-4">My Documents</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-3">Select</th>
+                        <th class="p-3">Doc Number</th>
+                        <th class="p-3">Requester</th>
+                        <th class="p-3">Department</th>
+                        <th class="p-3">Posting Date</th>
+                        <th class="p-3">Due Date</th>
+                        <th class="p-3">Classification</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="documentTable"></tbody>
+            </table>
+        </div>
+        <div class="flex justify-between mt-4">
+            <button onclick="window.location.href='Menu.html'" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 shadow-md transform hover:scale-105 transition-transform duration-300">Back</button>
+            <button onclick="submitToSystem()" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 shadow-md transform hover:scale-105 transition-transform duration-300">Submit to System</button>
+            <button onclick="goToMyData()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 shadow-md transform hover:scale-105 transition-transform duration-300">Create PR</button>
+        </div>
+    </div>
+</body>
+</html>
